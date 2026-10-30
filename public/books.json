@@ -1,12 +1,18 @@
 {
   "version": 1,
   "demo": true,
-  "books": [
-    {"id":"letters","title":"旅途与来信","author":"示例作者 · 青叶","description":"【原创演示书目】在没有终点的列车上，一位邮差寻找着从未署名的收信人。用你的真实书籍简介替换这里。","tags":["旅行","奇幻"],"status":"planned","updated":"2026-10-30"},
-    {"id":"rain","title":"雨停之前","author":"示例作者 · 南庭","description":"【原创演示书目】小镇连续下了三十天的雨，而图书馆里每天都会多出一封来自明天的信。","tags":["日常","治愈"],"status":"planned","updated":"2026-10-29"},
-    {"id":"another-page","title":"世界的另一页","author":"示例作者 · 时枝","description":"【原创演示书目】翻过一本旧书的最后一页，少女发现故事之外还有一座等待被写下的城市。","tags":["奇幻","冒险"],"status":"planned","updated":"2026-10-28"},
-    {"id":"summer","title":"借来的夏天","author":"示例作者 · 夏野","description":"【原创演示书目】毕业前的暑假，三个朋友决定修好山顶那座早已停摆的天文台。","tags":["青春","日常"],"status":"planned","updated":"2026-10-27"},
-    {"id":"stars","title":"星之邮便局","author":"示例作者 · 星川","description":"【原创演示书目】夜班邮局只投递寄往星空的信，直到有一天，它收到了第一封回信。","tags":["奇幻","治愈"],"status":"planned","updated":"2026-10-26"},
-    {"id":"island","title":"海风的备忘录","author":"示例作者 · 白汐","description":"【原创演示书目】一间岛上的旧书店，一本写满陌生笔迹的手账，以及一个重新认识故乡的夏天。","tags":["旅行","青春"],"status":"planned","updated":"2026-10-25"}
-  ]
+  "books": [{
+    "id": "letters",
+    "title": "旅途与来信",
+    "author": "示例作品",
+    "description": "林带着一封地址不全的信，坐上了末班车。两章示例正文，用于试读和下载。",
+    "tags": ["短篇", "示例"],
+    "status": "planned",
+    "updated": "2026-10-30",
+    "chapters": [
+      {"title": "第一章 末班车", "file": "files/letters/01.txt"},
+      {"title": "第二章 失物招领", "file": "files/letters/02.txt"}
+    ],
+    "downloads": [{"label": "下载 TXT", "file": "files/letters/full.txt"}]
+  }]
 }

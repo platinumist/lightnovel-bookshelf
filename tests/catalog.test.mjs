@@ -12,3 +12,14 @@ test('reject duplicate ids and invalid status or unsafe URLs',()=>{for(const cha
 test('search combines tags, local reading status and query',()=>{assert.deepEqual(selectBooks(catalog.books,{query:'  旅途 ',tag:'旅行',status:'reading'},{letters:'reading'}).map(b=>b.id),['letters']);assert.equal(selectBooks(catalog.books,{query:'不存在'}).length,0);assert.equal(selectBooks(catalog.books,{query:'青叶'}).length,1);});
 test('sorts without mutating input and respects local finished state',()=>{const before=catalog.books.map(b=>b.id);assert.equal(selectBooks(catalog.books)[0].id,'letters');assert.deepEqual(selectBooks(catalog.books,{status:'finished'},{rain:'finished'}).map(b=>b.id),['rain']);selectBooks(catalog.books,{sort:'title'});assert.deepEqual(catalog.books.map(b=>b.id),before);});
 test('links only accept https',()=>{assert.equal(safeUrl('javascript:alert(1)'),'');assert.equal(safeUrl('//evil.example'),'');assert.equal(safeUrl('https://example.com/book'),'https://example.com/book');});
+
+test('validates chapters and downloads; rejects traversal and active URLs',()=>{
+  const good=structuredClone(catalog);
+  good.books[0].chapters=[{title:'第一章',file:'files/test/01.txt'}];
+  good.books[0].downloads=[{label:'下载 EPUB',file:'files/test/book.epub'}];
+  assert.equal(validateCatalog(good),good);
+  for(const file of ['../secret.txt','files/../secret.txt','https://example.com/file.txt','javascript:alert(1)','files/%2e%2e/x.txt']){
+    const bad=structuredClone(good);bad.books[0].chapters[0].file=file;assert.throws(()=>validateCatalog(bad));
+  }
+  const bad=structuredClone(good);bad.books[0].chapters[0].file='files/test/book.html';assert.throws(()=>validateCatalog(bad));
+});

@@ -1,7 +1,7 @@
 import {statuses, validateCatalog, selectBooks, safeUrl} from './catalog.mjs';
 const $ = id => document.getElementById(id);
 const key = 'platinumist.bookshelf.status.v1';
-const colors = ['#dce3d0','#e8dfcd','#d6e1df','#e5d8ce','#dde0ea','#e4e3cd'];
+const colors = ['#dce9f9','#c9ddf4','#dae5f5','#d1e7f4','#dfe7fa','#c8dbed'];
 let books = [], overrides = {}, filter = {query:'',status:'all',tag:'all',sort:'updated'}, storageAvailable = true;
 try { const saved = JSON.parse(localStorage.getItem(key) || '{}'); if (saved && typeof saved === 'object' && !Array.isArray(saved)) overrides = Object.fromEntries(Object.entries(saved).filter(([,s]) => Object.hasOwn(statuses,s))); } catch { storageAvailable = false; }
 function node(tag, text, className) { const el=document.createElement(tag); if(text) el.textContent=text; if(className) el.className=className; return el; }
@@ -30,6 +30,11 @@ function showDetails(b) {
   const feedback=node('p',storageAvailable?'阅读状态仅保存在当前浏览器，不会修改 GitHub 书目。':'当前浏览器无法读取存储，状态可能只在本次打开期间保留。');
   select.addEventListener('change',()=>{overrides[b.id]=select.value;try{localStorage.setItem(key,JSON.stringify(overrides));feedback.textContent='已保存在当前浏览器。';}catch{feedback.textContent='浏览器存储不可用，本次状态仅在页面关闭前保留。';}render();});
   label.append(select);area.append(label,feedback);
+  const actions=node('div',null,'book-actions');
+  if(b.chapters?.length){const read=node('a','在线阅读','action primary');read.href='./reader.html?book='+encodeURIComponent(b.id);actions.append(read);}
+  for(const item of b.downloads || []){const link=node('a',item.label,'action');link.href='./'+item.file;link.download=item.file.split('/').pop();actions.append(link);}
+  if(actions.children.length)area.append(actions);
+  else area.append(node('p','尚未上传正文。'));
   if(b.url && safeUrl(b.url)){const link=node('a','查看作品来源 ↗','source-link');link.href=b.url;link.target='_blank';link.rel='noopener noreferrer';area.append(link);}
   $('details').showModal();
 }
@@ -37,7 +42,7 @@ async function load(){
   $('retry').hidden=true;$('notice').textContent='正在打开书架…';
   try {const response=await fetch('./books.json',{cache:'no-cache',signal:AbortSignal.timeout(12000)});if(!response.ok)throw new Error(`加载失败（${response.status}）`);const data=validateCatalog(await response.json());books=data.books;
     $('tag').replaceChildren(new Option('全部题材','all'));[...new Set(books.flatMap(b=>b.tags))].sort((a,b)=>a.localeCompare(b,'zh-CN')).forEach(t=>$('tag').append(new Option(t,t)));
-    $('notice').textContent=data.demo?'示例书架 · 以下为原创演示书目。请在 GitHub 替换 books.json，开始收藏你自己的故事。':'书目随 GitHub 发布更新 · 阅读状态保存在当前浏览器。';render();
+    $('notice').textContent=data.demo?'当前为示例书目，可试读和下载。':'选择书籍，查看详情、阅读或下载。';render();
   }catch(error){$('notice').textContent=`无法加载书架。${error.message} 请检查网络或书目文件，然后重试。`;$('retry').hidden=false;}
 }
 $('search').addEventListener('input',e=>{filter.query=e.target.value;render();});

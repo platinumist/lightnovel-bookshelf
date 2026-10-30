@@ -3,26 +3,26 @@
   "demo": true,
   "books": [
     {
-      "id": "letters",
-      "title": "旅途与来信",
-      "author": "示例作品",
-      "description": "林带着一封地址不全的信，坐上了末班车。分卷示例，共两卷，每卷一章。",
+      "id": "even garden",
+      "title": "紫罗兰永恒花园",
+      "author": "晓佳奈",
+      "description": "淡淡的文风独树一帜。",
       "tags": [
-        "短篇",
-        "示例"
+        "中篇",
+        "清新"
       ],
       "status": "planned",
       "updated": "2026-10-30",
       "volumes": [
         {
           "id": "vol01",
-          "title": "第1卷 末班车",
-          "epub": "files/letters/vol01.epub"
+          "title": "第1卷",
+          "epub": "D:/platinumist_website/lightnovel-bookshelf/public/files/紫罗兰/紫罗兰永恒花园 上.epub"
         },
         {
           "id": "vol02",
-          "title": "第2卷 失物招领",
-          "epub": "files/letters/vol02.epub"
+          "title": "第2卷",
+          "epub": "D:/platinumist_website/lightnovel-bookshelf/public/files/紫罗兰/紫罗兰永恒花园 下.epub"
         }
       ]
     }

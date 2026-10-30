@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="platinumist 的私人阅读角落，一座由 GitHub 维护的轻小说书架。"><title>轻小说书架 · platinumist</title><link rel="stylesheet" href="./style.css"><script type="module" src="./app.js"></script></head>
+<body>
+<header><a class="brand" href="./"><span class="brand-icon">栞</span><span>platinumist <small>个人书架 / PERSONAL LIBRARY</small></span></a><nav aria-label="主导航"><a href="https://platinumist.github.io/">资料库</a><a href="https://github.com/platinumist/lightnovel-bookshelf" target="_blank" rel="noopener">GitHub ↗</a></nav></header>
+<main>
+<section class="hero"><div><p class="eyebrow">A LITTLE SHELF, A BIG WORLD</p><h1>故事，在这里续页。</h1><p class="intro">把想读的世界收进书架，<br>为每一次翻页留一个位置。</p><a class="hero-link" href="#library">翻开我的书架 <span>↓</span></a></div><div class="illustration" aria-hidden="true"><div class="orbit"></div><span class="spark">✧</span><div class="spine s1">旅途与来信</div><div class="spine s2">雨停之前</div><div class="spine s3">世界的另一页</div><div class="shelf"></div><span class="caption">ONE MORE CHAPTER.</span></div></section>
+<section class="stats" aria-label="阅读概览"><div><strong id="total">—</strong><span>本藏书</span></div><div><strong id="reading">—</strong><span>正在读</span></div><div><strong id="finished">—</strong><span>已读完</span></div><p>慢慢读，<br>让想象多停留一会儿。</p></section>
+<section id="library"><div class="section-head"><div><p class="eyebrow">THE COLLECTION</p><h2>我的书架<span id="count"></span></h2></div><a class="manage" href="https://github.com/platinumist/lightnovel-bookshelf/edit/main/public/books.json" target="_blank" rel="noopener">在 GitHub 管理书目 ↗</a></div>
+<p id="notice" class="notice" role="status">正在打开书架…</p>
+<div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索书名、作者、标签…" aria-label="搜索书名、作者、标签"></label><label class="sort-label">排序 <select id="sort"><option value="updated">最近更新</option><option value="title">书名顺序</option></select></label></div>
+<div class="filters"><div id="statuses" class="tabs" aria-label="阅读状态"><button data-status="all" aria-pressed="true">全部</button><button data-status="planned" aria-pressed="false">想读</button><button data-status="reading" aria-pressed="false">在读</button><button data-status="finished" aria-pressed="false">读完</button></div><label>题材 <select id="tag"><option value="all">全部题材</option></select></label></div>
+<div id="grid" class="grid" aria-live="polite"></div><div id="empty" class="empty" hidden><span>✧</span><h3>这里还没有故事</h3><p>试试其他关键词，或为书架添加第一本书。</p><button id="reset">清除筛选</button></div><button id="retry" hidden>重新加载</button>
+</section>
+</main><footer><span>栞 &nbsp; platinumist 的轻小说书架</span><span>书目由 GitHub 维护 · 阅读状态仅保存在当前浏览器</span></footer>
+<dialog id="details"><button class="close" id="close" aria-label="关闭详情">×</button><div id="detail-content"></div></dialog>
+<noscript>书架需要 JavaScript 才能展示书目；你也可以直接在 GitHub 查看 books.json。</noscript>
+</body></html>
+

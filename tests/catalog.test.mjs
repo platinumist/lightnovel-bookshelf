@@ -48,3 +48,12 @@ test('reject invalid series, repeated volume ids and mixed files',()=>{
   const copy=structuredClone(seriesCatalog);change(copy.books[0]);assert.throws(()=>validateCatalog(copy));
  }
 });
+
+test('Chinese EPUB filenames and spaces are supported; absolute paths are rejected',()=>{
+ const data=structuredClone(catalog);data.books[0].volumes=[{id:'vol01',title:'上卷',epub:'files/紫罗兰/紫罗兰永恒花园 上.epub'}];
+ assert.equal(validateCatalog(data),data);
+ for(const file of ['D:/files/book.epub','files/紫罗兰/../book.epub','files/紫罗兰/book#x.epub','files/紫罗兰/book?.epub','files/紫罗兰/book%20.epub','files/紫罗兰\\book.epub']){
+  data.books[0].volumes[0].epub=file;assert.throws(()=>validateCatalog(data));
+ }
+ data.books[0].volumes[0].epub='files/紫罗兰/紫罗兰永恒花园 上.epub';data.books[0].id='with space';assert.throws(()=>validateCatalog(data),/id/);
+});

@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "demo": true,
+  "demo": false,
   "books": [
     {
-      "id": "even garden",
+      "id": "even-garden",
       "title": "紫罗兰永恒花园",
       "author": "晓佳奈",
       "description": "淡淡的文风独树一帜。",
@@ -17,12 +17,12 @@
         {
           "id": "vol01",
           "title": "第1卷",
-          "epub": "D:/platinumist_website/lightnovel-bookshelf/public/files/紫罗兰/紫罗兰永恒花园 上.epub"
+          "epub": "files/紫罗兰/紫罗兰永恒花园 上.epub"
         },
         {
           "id": "vol02",
           "title": "第2卷",
-          "epub": "D:/platinumist_website/lightnovel-bookshelf/public/files/紫罗兰/紫罗兰永恒花园 下.epub"
+          "epub": "files/紫罗兰/紫罗兰永恒花园 下.epub"
         }
       ]
     }

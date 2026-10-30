@@ -3,7 +3,7 @@ export function validateCatalog(data) {
   if (!data || data.version !== 1 || !Array.isArray(data.books)) throw new Error('书目格式无效：需要 version: 1 和 books 数组。');
   const ids = new Set();
   for (const book of data.books) {
-    if (!book || typeof book.id !== 'string' || !/^[a-z0-9_-]+$/i.test(book.id) || ids.has(book.id)) throw new Error('每本书需要唯一的英文或数字 id。');
+    if (!book || typeof book.id !== 'string' || !/^[a-z0-9_-]+$/i.test(book.id) || ids.has(book.id)) throw new Error('作品 id 只能使用英文字母、数字、下划线或连字符，且不能重复：'+JSON.stringify(book?.id));
     ids.add(book.id);
     for (const field of ['title','author','description']) if (typeof book[field] !== 'string' || !book[field].trim()) throw new Error(`${book.id} 缺少 ${field}。`);
     if (!Object.hasOwn(statuses, book.status) || !Array.isArray(book.tags) || book.tags.some(t => typeof t !== 'string')) throw new Error(`${book.id} 的状态或标签无效。`);
@@ -32,7 +32,7 @@ export function selectBooks(books, {query='',status='all',tag='all',sort='update
   return books.filter(b => (status === 'all' || (overrides[b.id] || b.status) === status) && (tag === 'all' || b.tags.includes(tag)) && [b.title,b.author,...b.tags,...(b.volumes||[]).map(v=>v.title)].join(' ').toLocaleLowerCase().includes(q)).sort((a,b) => sort === 'title' ? a.title.localeCompare(b.title,'zh-CN') : b.updated.localeCompare(a.updated) || a.title.localeCompare(b.title,'zh-CN'));
 }
 
-export function safeFile(value) { return typeof value === 'string' && /^files\/[a-zA-Z0-9_/-]+\.[a-zA-Z0-9]+$/.test(value) && !value.split('/').includes('..'); }
+export function safeFile(value) { return typeof value === 'string' && /^files\/(?:[\p{L}\p{N}_ -]+\/)*[\p{L}\p{N}_ -]+\.[a-zA-Z0-9]+$/u.test(value) && !value.split('/').includes('..'); }
 
 
 export function resolveBook(data,bookId,volumeId=null){

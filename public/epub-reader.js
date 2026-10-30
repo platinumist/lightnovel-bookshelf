@@ -23,7 +23,7 @@ async function init(){
   let watchdog;
   try{
     rendition?.destroy();ebook?.destroy();$('viewer').replaceChildren();
-    const response=await fetch('./books.json',{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('书目加载失败');
+    const response=await fetch('./books.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('书目加载失败');
     const data=validateCatalog(await response.json());source=resolveBook(data,bookId,volumeId);
     positionKey='platinumist.epub.position.'+bookId+(source.volumeId?'.'+source.volumeId:'');
     const series=data.books.find(b=>b.id===bookId);

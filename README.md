@@ -2,67 +2,66 @@
 
 网站：https://platinumist.github.io/lightnovel-bookshelf/
 
-个人轻小说书架，使用 GitHub Pages 发布。原生 HTML、CSS 和 JavaScript，无第三方运行依赖。
+个人轻小说书架，蓝色界面。支持 EPUB 在线阅读和原文件下载，使用 GitHub Pages 发布。
 
-## 功能
+## 上传 EPUB
 
-- 书名、作者和标签搜索，题材与阅读状态筛选。
-- 书籍详情、在线阅读、文件下载。
-- 阅读目录、章节切换、三档字号、日间/夜间模式。
-- 阅读位置和设置保存在当前浏览器。
-- 蓝色界面，适配手机和桌面。
-
-目前保留一本示例作品、两章示例正文，可直接测试阅读与下载。
-
-## 添加书籍
-
-编辑 `public/books.json`，用真实书目替换示例，将 `demo` 改成 `false`：
+1. 把 EPUB 放入 `public/files/`，例如 `public/files/my-book/book.epub`。
+2. 在 `public/books.json` 添加书目：
 
 ```json
 {
-  "version": 1,
-  "demo": false,
-  "books": [{
-    "id": "my-book",
-    "title": "书名",
-    "author": "作者",
-    "description": "简介",
-    "tags": ["奇幻"],
-    "status": "planned",
-    "updated": "2026-10-30",
-    "chapters": [
-      {"title": "第一章", "file": "files/my-book/01.txt"}
-    ],
-    "downloads": [
-      {"label": "下载 TXT", "file": "files/my-book/full.txt"},
-      {"label": "下载 EPUB", "file": "files/my-book/book.epub"}
-    ]
-  }]
+  "id": "my-book",
+  "title": "书名",
+  "author": "作者",
+  "description": "简介",
+  "tags": ["奇幻"],
+  "status": "planned",
+  "updated": "2026-10-30",
+  "epub": "files/my-book/book.epub"
 }
 ```
 
-正文放在 `public/files/my-book/`，文件名使用英文、数字、下划线或连字符。在线阅读接受 UTF-8 编码的 TXT，段落之间空一行。章节标题在 `chapters` 中填写。正文按照纯文本显示。
+3. 用真实书目替换示例后，将文件顶部的 `demo` 改为 `false`。
+4. 提交到 `main`，等待 GitHub Actions 发布。
 
-下载文件单独上传，可提供 TXT、EPUB、PDF 等格式。网站不会自动将章节合并或转换格式。目录中的文件路径必须存在且不为空，否则构建会失败。书籍没有正文或下载文件时，可以省略对应字段。
+EPUB 不需要解压或拆章。阅读器会读取文件内的目录、正文和图片，并自动提供原文件下载。文件路径使用英文、数字、下划线或连字符；书名和作者照常使用中文。
 
-`id` 是每本书的唯一标识，修改后会产生新的本地阅读记录。`status` 可选 `planned`、`reading`、`finished`。可选字段 `cover`（封面）和 `url`（来源）接受 HTTPS 链接。所有文件会公开发布，请上传你拥有或获准分发的内容。
+`id` 必须唯一，修改后会产生新的阅读记录。`status` 可用 `planned`、`reading`、`finished`。封面 `cover` 和作品来源 `url` 是可选的 HTTPS 链接。当前支持未加密的 EPUB，不能打开带 DRM 的文件。
+
+## 阅读功能
+
+- EPUB 内置目录、上一页/下一页、左右方向键翻页。
+- 三档字号、日间/夜间模式，手机和桌面适配。
+- 保存阅读位置，重新打开后继续；进度仅保存在当前浏览器。
+- EPUB 原文件下载。其他格式也可通过 `downloads` 添加：
+
+```json
+"downloads": [{"label": "下载 PDF", "file": "files/my-book/book.pdf"}]
+```
+
+现有 TXT 分章阅读仍可使用：
+
+```json
+"chapters": [{"title": "第一章", "file": "files/my-book/01.txt"}]
+```
+
+TXT 使用 UTF-8 编码，段落间空一行。同一本书填写 `epub` 时，在线阅读优先打开 EPUB。章节和下载文件必须存在且不为空，否则构建会失败。所有上传文件都会公开发布，请使用你拥有或获准分发的内容。
 
 ## 本地开发
 
-安装 Node.js 22 或更新版本：
+Node.js 22 或更新版本，无需安装 npm 依赖：
 
 ```sh
-npm test
-npm run build
-npm run dev
+node --test tests/catalog.test.mjs
+node scripts/build.mjs
+node scripts/serve.mjs
 ```
 
-预览地址：http://127.0.0.1:4173/ 。也可直接执行 `node --test tests/catalog.test.mjs`、`node scripts/build.mjs`、`node scripts/serve.mjs`。
+也可使用 `npm test`、`npm run build`、`npm run dev`。预览地址：http://127.0.0.1:4173/ 。
 
-推送到 `main` 后，GitHub Actions 会运行测试、检查书目文件并发布到 GitHub Pages。
+GitHub Actions 会运行测试、检查书目及文件，然后发布到 GitHub Pages。
 
-## 后续
+## 阅读组件
 
-- 分卷管理和阅读记录备份。
-- EPUB 在线阅读。
-- 按需求增加跨设备同步。
+EPUB 阅读使用 [epub.js 0.3.93](https://github.com/futurepress/epub.js) 和 [JSZip 3.10.1](https://github.com/Stuk/jszip)。库文件随站点部署，不依赖外部 CDN；许可证保存在 `public/vendor/`。EPUB 内的脚本默认禁用。

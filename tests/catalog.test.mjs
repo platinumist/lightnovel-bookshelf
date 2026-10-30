@@ -23,3 +23,8 @@ test('validates chapters and downloads; rejects traversal and active URLs',()=>{
   }
   const bad=structuredClone(good);bad.books[0].chapters[0].file='files/test/book.html';assert.throws(()=>validateCatalog(bad));
 });
+
+test('EPUB files use a local epub path',()=>{
+  const data=structuredClone(catalog);data.books[0].epub='files/test/book.epub';assert.equal(validateCatalog(data),data);
+  for(const file of ['files/test/book.html','https://example.com/book.epub','files/../book.epub']){data.books[0].epub=file;assert.throws(()=>validateCatalog(data));}
+});

@@ -31,8 +31,10 @@ function showDetails(b) {
   select.addEventListener('change',()=>{overrides[b.id]=select.value;try{localStorage.setItem(key,JSON.stringify(overrides));feedback.textContent='已保存在当前浏览器。';}catch{feedback.textContent='浏览器存储不可用，本次状态仅在页面关闭前保留。';}render();});
   label.append(select);area.append(label,feedback);
   const actions=node('div',null,'book-actions');
-  if(b.chapters?.length){const read=node('a','在线阅读','action primary');read.href='./reader.html?book='+encodeURIComponent(b.id);actions.append(read);}
-  for(const item of b.downloads || []){const link=node('a',item.label,'action');link.href='./'+item.file;link.download=item.file.split('/').pop();actions.append(link);}
+  if(b.epub || b.chapters?.length){const read=node('a','在线阅读','action primary');read.href='./reader.html?book='+encodeURIComponent(b.id);actions.append(read);}
+  const downloads=[...(b.downloads || [])];
+  if(b.epub && !downloads.some(d=>d.file===b.epub))downloads.unshift({label:'下载 EPUB',file:b.epub});
+  for(const item of downloads){const link=node('a',item.label,'action');link.href='./'+item.file;link.download=item.file.split('/').pop();actions.append(link);}
   if(actions.children.length)area.append(actions);
   else area.append(node('p','尚未上传正文。'));
   if(b.url && safeUrl(b.url)){const link=node('a','查看作品来源 ↗','source-link');link.href=b.url;link.target='_blank';link.rel='noopener noreferrer';area.append(link);}
@@ -53,3 +55,4 @@ $('reset').addEventListener('click',()=>{filter={query:'',status:'all',tag:'all'
 $('close').addEventListener('click',()=>$('details').close());
 $('details').addEventListener('click',e=>{if(e.target===$('details')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('retry').addEventListener('click',load);load();
+

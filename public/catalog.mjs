@@ -9,6 +9,7 @@ export function validateCatalog(data) {
     if (!Object.hasOwn(statuses, book.status) || !Array.isArray(book.tags) || book.tags.some(t => typeof t !== 'string')) throw new Error(`${book.id} 的状态或标签无效。`);
     if (typeof book.updated !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(book.updated) || !Number.isFinite(Date.parse(book.updated))) throw new Error(`${book.id} 的更新日期无效。`);
     for (const field of ['url','cover']) if (book[field] != null && (typeof book[field] !== 'string' || (book[field] && !safeUrl(book[field])))) throw new Error(`${book.id} 的 ${field} 必须为 HTTPS 链接。`);
+    if(book.epub != null && (!safeFile(book.epub) || !book.epub.endsWith('.epub'))) throw new Error(book.id+' 的 EPUB 路径无效。');
     if(book.chapters != null && (!Array.isArray(book.chapters) || book.chapters.some(c => !c || typeof c.title !== 'string' || !c.title.trim() || !safeFile(c.file) || !c.file.endsWith('.txt')))) throw new Error(book.id+' 的章节需要标题和本地 TXT 文件。');
     if(book.downloads != null && (!Array.isArray(book.downloads) || book.downloads.some(d => !d || typeof d.label !== 'string' || !d.label.trim() || !safeFile(d.file)))) throw new Error(book.id+' 的下载配置无效。');
   }
@@ -21,3 +22,4 @@ export function selectBooks(books, {query='',status='all',tag='all',sort='update
 }
 
 export function safeFile(value) { return typeof value === 'string' && /^files\/[a-zA-Z0-9_/-]+\.[a-zA-Z0-9]+$/.test(value) && !value.split('/').includes('..'); }
+

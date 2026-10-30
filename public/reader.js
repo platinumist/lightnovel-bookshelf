@@ -45,6 +45,7 @@ async function init(){
     const response=await fetch('./books.json',{signal:AbortSignal.timeout(12000)});if(!response.ok)throw new Error('书目加载失败');
     const data=validateCatalog(await response.json());book=data.books.find(b=>b.id===bookId);
     if(!book)throw new Error('没有找到这本书，请返回书架重新选择。');
+    if(book.epub){location.replace('./epub-reader.html?book='+encodeURIComponent(book.id));return;}
     if(!book.chapters?.length)throw new Error('这本书还没有上传正文。');
     $('book-title').textContent=book.title;
     $('chapters').replaceChildren(...book.chapters.map((c,i)=>new Option(c.title,String(i))));$('chapters').disabled=false;
@@ -61,4 +62,5 @@ $('prev').addEventListener('click',()=>chapter(current-1));$('next').addEventLis
 addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(storePosition,250);},{passive:true});
 addEventListener('pagehide',storePosition);document.addEventListener('visibilitychange',()=>{if(document.hidden)storePosition();});
 init();
+
 

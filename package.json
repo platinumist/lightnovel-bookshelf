@@ -1,6 +1,6 @@
 {
   "name": "lightnovel-bookshelf",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "A personal light novel bookshelf driven by a public GitHub repository",
@@ -11,4 +11,5 @@
   },
   "engines": { "node": ">=22" }
 }
+
 

@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EPUB 阅读 · platinumist</title><link rel="stylesheet" href="./reader.css"><link rel="stylesheet" href="./epub-reader.css"><script defer src="./vendor/jszip.min.js"></script><script defer src="./vendor/epub.min.js"></script><script type="module" src="./epub-reader.js"></script></head>
+<body><header><a href="./">← 返回书架</a><span id="book-title">EPUB 阅读</span><a id="download" hidden download>下载 EPUB</a><button id="theme" aria-pressed="false">夜间</button></header>
+<main><aside aria-label="阅读设置"><label for="chapters">目录</label><select id="chapters" disabled></select><label for="font-size">字号</label><select id="font-size"><option value="18">小</option><option value="20" selected>中</option><option value="24">大</option></select><span id="progress">进度保存在当前浏览器</span></aside>
+<p id="message" role="status">正在打开 EPUB…</p><button id="retry" hidden>重试</button><div id="viewer" aria-label="EPUB 正文"></div>
+<nav aria-label="翻页"><button id="prev" disabled>上一页</button><span id="page-info"></span><button id="next" disabled>下一页</button></nav></main></body></html>

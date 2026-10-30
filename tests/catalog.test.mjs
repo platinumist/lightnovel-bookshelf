@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {validateCatalog,selectBooks,safeUrl} from '../public/catalog.mjs';
+import {validateCatalog,selectBooks,safeUrl,resolveBook,bookFiles} from '../public/catalog.mjs';
 const published=JSON.parse((await readFile(new URL('../public/books.json',import.meta.url),'utf8')).replace(/^\uFEFF/,''));
 const catalog={version:1,books:[
  {id:'letters',title:'旅途与来信',author:'青叶',description:'测试',tags:['旅行'],status:'planned',updated:'2026-10-30'},
@@ -27,4 +27,24 @@ test('validates chapters and downloads; rejects traversal and active URLs',()=>{
 test('EPUB files use a local epub path',()=>{
   const data=structuredClone(catalog);data.books[0].epub='files/test/book.epub';assert.equal(validateCatalog(data),data);
   for(const file of ['files/test/book.html','https://example.com/book.epub','files/../book.epub']){data.books[0].epub=file;assert.throws(()=>validateCatalog(data));}
+});
+
+const seriesCatalog={version:1,books:[{...catalog.books[0],volumes:[
+ {id:'v01',title:'第1卷 起点',epub:'files/test/vol01.epub'},
+ {id:'v02',title:'第2卷 归途',epub:'files/test/vol02.epub',downloads:[{label:'PDF',file:'files/test/vol02.pdf'}]}
+]}]};
+test('series has one card and is searchable by volume title',()=>{
+ assert.equal(validateCatalog(seriesCatalog),seriesCatalog);
+ assert.equal(selectBooks(seriesCatalog.books,{query:'归途'}).length,1);
+ assert.equal(resolveBook(seriesCatalog,'letters','v02').epub,'files/test/vol02.epub');
+ assert.equal(resolveBook(seriesCatalog,'letters').volumeId,'v01');
+ assert.throws(()=>resolveBook(seriesCatalog,'letters','missing'));
+ assert.equal(resolveBook(catalog,'letters').title,catalog.books[0].title);
+ assert.throws(()=>resolveBook(catalog,'letters','v01'));
+ assert.deepEqual(bookFiles(seriesCatalog.books[0]).map(x=>x.file).sort(),['files/test/vol01.epub','files/test/vol02.epub','files/test/vol02.pdf']);
+});
+test('reject invalid series, repeated volume ids and mixed files',()=>{
+ for(const change of [b=>b.volumes=[],b=>b.volumes[1].id='v01',b=>b.volumes[0].epub='../file.epub',b=>b.volumes[0].title='',b=>b.epub='files/book.epub',b=>b.volumes[0].downloads=[{label:'Bad',file:'javascript:alert(1)'}]]){
+  const copy=structuredClone(seriesCatalog);change(copy.books[0]);assert.throws(()=>validateCatalog(copy));
+ }
 });

@@ -1,7 +1,8 @@
-import {validateCatalog} from './catalog.mjs';
+import {validateCatalog,resolveBook} from './catalog.mjs';
 const $=id=>document.getElementById(id);
 const bookId=new URLSearchParams(location.search).get('book');
-const positionKey='platinumist.epub.position.'+bookId;
+const volumeId=new URLSearchParams(location.search).get('volume');
+let positionKey='platinumist.epub.position.'+bookId;
 let ebook,rendition,toc=[],loading=false,ready=false,lastLocation,source,storageOK=true;
 function read(key){try{return JSON.parse(localStorage.getItem(key)||'null');}catch{storageOK=false;return null;}}
 function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch{storageOK=false;}}
@@ -23,7 +24,12 @@ async function init(){
   try{
     rendition?.destroy();ebook?.destroy();$('viewer').replaceChildren();
     const response=await fetch('./books.json',{signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('书目加载失败');
-    const data=validateCatalog(await response.json());source=data.books.find(b=>b.id===bookId);if(!source?.epub)throw new Error('没有找到 EPUB 文件，请返回书架重新选择。');
+    const data=validateCatalog(await response.json());source=resolveBook(data,bookId,volumeId);
+    positionKey='platinumist.epub.position.'+bookId+(source.volumeId?'.'+source.volumeId:'');
+    const series=data.books.find(b=>b.id===bookId);
+    $('volumes').hidden=$('volume-label').hidden=!series.volumes;
+    if(series.volumes){$('volumes').replaceChildren(...series.volumes.map(v=>new Option(v.title,v.id)));$('volumes').value=source.volumeId;}
+    if(!source?.epub)throw new Error('没有找到 EPUB 文件，请返回书架重新选择。');
     $('book-title').textContent=source.title;document.title=source.title+' · 在线阅读';$('download').href='./'+source.epub;$('download').hidden=false;$('download').download=source.epub.split('/').pop();
     const file=await fetch('./'+source.epub,{signal:AbortSignal.timeout(60000)});if(!file.ok)throw new Error('EPUB 文件加载失败（'+file.status+'）');
     const buffer=await file.arrayBuffer();
@@ -42,5 +48,5 @@ async function init(){
     ready=true;loading=false;$('message').hidden=true;controls();
   }catch(err){clearTimeout(watchdog);loading=false;ready=false;error(err.name==='TimeoutError'?'文件加载超时，请重试。':err.message);controls();}
 }
+$('volumes').addEventListener('change',e=>{location.href='./epub-reader.html?book='+encodeURIComponent(bookId)+'&volume='+encodeURIComponent(e.target.value);});
 $('retry').addEventListener('click',init);init();
-

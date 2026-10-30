@@ -6,20 +6,25 @@
       "id": "letters",
       "title": "旅途与来信",
       "author": "示例作品",
-      "description": "林带着一封地址不全的信，坐上了末班车。EPUB 示例作品，共两章。",
+      "description": "林带着一封地址不全的信，坐上了末班车。分卷示例，共两卷，每卷一章。",
       "tags": [
         "短篇",
         "示例"
       ],
       "status": "planned",
       "updated": "2026-10-30",
-      "downloads": [
+      "volumes": [
         {
-          "label": "下载 TXT",
-          "file": "files/letters/full.txt"
+          "id": "vol01",
+          "title": "第1卷 末班车",
+          "epub": "files/letters/vol01.epub"
+        },
+        {
+          "id": "vol02",
+          "title": "第2卷 失物招领",
+          "epub": "files/letters/vol02.epub"
         }
-      ],
-      "epub": "files/letters/book.epub"
+      ]
     }
   ]
 }

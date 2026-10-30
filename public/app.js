@@ -19,7 +19,7 @@ function render() {
     cover.append(node('span','LIGHT NOVEL / '+String(books.indexOf(b)+1).padStart(2,'0'),'series'),node('span',b.title,'cover-title'),node('span',b.author,'cover-bottom'));
     if(b.cover && safeUrl(b.cover)){const img=node('img');img.src=b.cover;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>img.remove());cover.append(img);}
     const meta=node('div',null,'book-meta');meta.append(node('span',statuses[statusOf(b)],'badge'),node('span',b.tags.slice(0,2).join(' / '),'tags'));
-    card.append(cover,node('h3',b.title),node('p',b.author,'author'),meta);card.addEventListener('click',()=>showDetails(b));$('grid').append(card);
+    card.append(cover,node('h3',b.title),node('p',b.author+(b.volumes?' · '+b.volumes.length+' 卷':''),'author'),meta);card.addEventListener('click',()=>showDetails(b));$('grid').append(card);
   });
 }
 function showDetails(b) {
@@ -30,13 +30,22 @@ function showDetails(b) {
   const feedback=node('p',storageAvailable?'阅读状态仅保存在当前浏览器，不会修改 GitHub 书目。':'当前浏览器无法读取存储，状态可能只在本次打开期间保留。');
   select.addEventListener('change',()=>{overrides[b.id]=select.value;try{localStorage.setItem(key,JSON.stringify(overrides));feedback.textContent='已保存在当前浏览器。';}catch{feedback.textContent='浏览器存储不可用，本次状态仅在页面关闭前保留。';}render();});
   label.append(select);area.append(label,feedback);
-  const actions=node('div',null,'book-actions');
-  if(b.epub || b.chapters?.length){const read=node('a','在线阅读','action primary');read.href='./reader.html?book='+encodeURIComponent(b.id);actions.append(read);}
-  const downloads=[...(b.downloads || [])];
-  if(b.epub && !downloads.some(d=>d.file===b.epub))downloads.unshift({label:'下载 EPUB',file:b.epub});
-  for(const item of downloads){const link=node('a',item.label,'action');link.href='./'+item.file;link.download=item.file.split('/').pop();actions.append(link);}
-  if(actions.children.length)area.append(actions);
-  else area.append(node('p','尚未上传正文。'));
+  function actionsFor(item,volumeId){
+    const actions=node('div',null,'book-actions');
+    if(item.epub || item.chapters?.length){const read=node('a','在线阅读','action primary');read.href='./reader.html?book='+encodeURIComponent(b.id)+(volumeId?'&volume='+encodeURIComponent(volumeId):'');actions.append(read);}
+    const downloads=[...(item.downloads || [])];
+    if(item.epub && !downloads.some(d=>d.file===item.epub))downloads.unshift({label:'下载 EPUB',file:item.epub});
+    for(const item of downloads){const link=node('a',item.label,'action');link.href='./'+item.file;link.download=item.file.split('/').pop();actions.append(link);}
+    return actions;
+  }
+  if(b.volumes){
+    area.append(node('h3','分卷 · '+b.volumes.length+' 卷'));
+    const list=node('div',null,'volume-list');
+    for(const volume of b.volumes){const row=node('section',null,'volume-row');row.append(node('h4',volume.title),actionsFor(volume,volume.id));list.append(row);}
+    area.append(list);
+  }else{
+    const actions=actionsFor(b);if(actions.children.length)area.append(actions);else area.append(node('p','尚未上传正文。'));
+  }
   if(b.url && safeUrl(b.url)){const link=node('a','查看作品来源 ↗','source-link');link.href=b.url;link.target='_blank';link.rel='noopener noreferrer';area.append(link);}
   $('details').showModal();
 }
@@ -55,4 +64,3 @@ $('reset').addEventListener('click',()=>{filter={query:'',status:'all',tag:'all'
 $('close').addEventListener('click',()=>$('details').close());
 $('details').addEventListener('click',e=>{if(e.target===$('details')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 $('retry').addEventListener('click',load);load();
-

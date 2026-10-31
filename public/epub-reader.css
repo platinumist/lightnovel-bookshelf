@@ -31,3 +31,6 @@ nav button{padding:8px 16px}
  aside:has(#volumes:not([hidden])) #font-size{width:74px}
  aside:has(#volumes:not([hidden])) #progress{grid-column:3/5}
 }
+#reading-mode{width:80px}
+#viewer .epub-container{overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:#9bb8db transparent}
+@media(max-width:600px){aside:has(#volumes:not([hidden])) #progress{grid-column:1/5}aside #progress{flex-basis:100%}}

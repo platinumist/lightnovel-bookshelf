@@ -11,7 +11,7 @@ if([18,20,24].includes(settings.font))$('font-size').value=String(settings.font)
 if(settings.night===true)document.body.classList.add('night');
 function applySettings(){document.documentElement.style.setProperty('--font-size',$('font-size').value+'px');const night=document.body.classList.contains('night');$('theme').textContent=night?'日间':'夜间';$('theme').setAttribute('aria-pressed',String(night));}
 applySettings();
-function persistSettings(){save('platinumist.reader.settings',{font:Number($('font-size').value),night:document.body.classList.contains('night')});}
+function persistSettings(){save('platinumist.reader.settings',{...settings,font:Number($('font-size').value),night:document.body.classList.contains('night')});}
 $('font-size').addEventListener('change',()=>{applySettings();persistSettings();});
 $('theme').addEventListener('click',()=>{document.body.classList.toggle('night');applySettings();persistSettings();});
 function storePosition(){if(!loaded||!book)return;const height=document.documentElement.scrollHeight-innerHeight;bookmark={file:book.chapters[current].file,ratio:height>0?Math.min(1,Math.max(0,scrollY/height)):0};save(positionKey,bookmark);$('progress').textContent=storageOK?'进度已保存':'浏览器无法保存进度';}
